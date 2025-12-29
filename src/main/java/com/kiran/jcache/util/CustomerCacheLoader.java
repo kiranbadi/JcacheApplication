@@ -19,7 +19,7 @@ import com.kiran.jcache.model.Customer;
 import com.kiran.jcache.repository.CustomerRepository;
 
 
-// TODO : Need to fix the cache loader.Difference in implmentation for jcache and spring respositories.
+// TODO : Need to fix the cache loader.Difference in implementation for jcache and spring repositories.
 
 @Component
 public class CustomerCacheLoader implements CacheLoader<Long,Customer>{
@@ -48,8 +48,7 @@ public class CustomerCacheLoader implements CacheLoader<Long,Customer>{
 	@Override
 	public Customer load(Long key) throws CacheLoaderException {
 		LOG.info("load called with key " + key);
-		Customer customer = customerRepository.findOne(key);
-		return customer;
+        return customerRepository.findOne(key);
 	}
 
 }

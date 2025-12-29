@@ -25,7 +25,7 @@ import com.kiran.jcache.repository.AddressesRepository;
 public class AddressController {
 	
 	private static final Log LOG = LogFactory.getLog(AddressController.class);
-	private AddressesRepository addressesRepository;
+	private final AddressesRepository addressesRepository;
 
 	public AddressController(AddressesRepository addressesRepository) {
 		super();
@@ -57,7 +57,7 @@ public class AddressController {
 	
 	
 	@ResponseBody
-	@RequestMapping(value = "/postaddress" , method = RequestMethod.POST)
+	@RequestMapping(value = "/post-address" , method = RequestMethod.POST)
 	@CachePut
 	public boolean postAddress(@PathVariable("id") @CacheKey Long id, @CacheValue Address address) {
 		LOG.info("Post for Address" + address);

@@ -2,6 +2,7 @@ package com.kiran.jcache.repository;
 
 import java.util.Collection;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -14,7 +15,8 @@ import com.kiran.jcache.model.Customer;
 public interface CustomerRepository extends CrudRepository<Customer,Long>{
 
 
-	@Query("delete from Customer c where c.id IN :keys")
+	@Modifying
+    @Query("delete from Customer c where c.id IN :keys")
 	void deleteAll(@Param("keys") Collection<?> keys);
 
 

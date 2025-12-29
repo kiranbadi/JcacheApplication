@@ -1,5 +1,6 @@
 package com.kiran.jcache.model;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
@@ -12,15 +13,14 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 
-
+@SuppressWarnings({"unused"})
 @Entity
 @Table(name = "customer")
 public class Customer implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1296280821345484703L;
+
+	@Serial
+    private static final long serialVersionUID = 1296280821345484703L;
 	
 	
 	

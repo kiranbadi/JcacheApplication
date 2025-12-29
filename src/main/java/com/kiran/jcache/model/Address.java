@@ -1,5 +1,6 @@
 package com.kiran.jcache.model;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import javax.persistence.Entity;
@@ -7,13 +8,15 @@ import javax.persistence.Id;
 
 
 @Entity
+@SuppressWarnings("unused")
 public class Address implements Serializable{
 	
 	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 7190780643800480467L;
+	@Serial
+    private static final long serialVersionUID = 7190780643800480467L;
 
 	@Id
 	private Long id;

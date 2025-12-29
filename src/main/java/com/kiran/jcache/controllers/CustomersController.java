@@ -1,13 +1,9 @@
 package com.kiran.jcache.controllers;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.security.SecureRandom;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.cache.Cache;
 import javax.cache.processor.EntryProcessorResult;
@@ -32,7 +28,14 @@ public class CustomersController {
 	
 	private static final Log LOG = LogFactory.getLog(CustomersController.class);
 	
-	private Cache<Long,Customer> customerCache;
+	private final Cache<Long,Customer> customerCache;
+
+    protected static final String LETTERS =
+            IntStream.rangeClosed('A', 'Z')
+                    .mapToObj(c -> String.valueOf((char) c))
+                    .collect(Collectors.joining()) +
+                    "0123456789";
+    protected static final SecureRandom RANDOM = new SecureRandom();
 	
 	public CustomersController(Cache<Long, Customer> customerCache) {
 		this.customerCache = customerCache;
@@ -57,66 +60,57 @@ public class CustomersController {
 	
 	
 	@ResponseBody
-	@RequestMapping(value = "/loadcachedata" , method = RequestMethod.GET)
+	@RequestMapping(value = "/load-cache-data" , method = RequestMethod.GET)
 	public boolean loadCacheData() {
-		Customer cust = new Customer();
+		Customer customer = new Customer();
 		Date date = new Date();
-		for(int i = 1 ; i <100 ;i++) {			
-	    	cust.setId((long) i);
-			cust.setFirstName(getRandomString() + i);
-			cust.setLastName(getRandomString() + i);
-			cust.setDob(date);
-			customerCache.put((long) i, cust);
+		for(int i = 1 ; i <100 ;i++) {
+            customer.setId((long) i);
+            customer.setFirstName(getRandomString(5));
+            customer.setLastName(getRandomString(4));
+            customer.setDob(date);
+			customerCache.put((long) i, customer);
 		}
 		return true;
 	}
 	
 	
 	@ResponseBody
-	@RequestMapping(value = "/RemoveCacheElement/{key}" , method = RequestMethod.DELETE)
+	@RequestMapping(value = "/remove-cache-element/{key}" , method = RequestMethod.DELETE)
 	public boolean removeCacheElement(@PathVariable("key") Long key) {
 		return customerCache.remove(key);
 	}
+
+    @ResponseBody
+    @RequestMapping(value = "/ClearCache" , method = RequestMethod.DELETE)
+    public boolean ClearCache() {
+        customerCache.clear();
+        return true;
+    }
 	
-	@ResponseBody
-	@RequestMapping(value = "/ClearCache" , method = RequestMethod.DELETE)
-	public boolean ClearCache() {
-		 boolean status = false ;
-		 customerCache.clear();
-		 if(customerCache == null) {
-			 status = true;
-		 return status;
-		 }
-		return status;
-	}
-	
-	//TODO: getAllCacheData needs to fixed for writethrough and read through implemention
+	//TODO: getAllCacheData needs to fixed for writethrough and read through implementation
 	// No DAO for fetching data from DB so getting empty list.
-	
 	@ResponseBody
-	@RequestMapping(value = "/getallcachedata" , method = RequestMethod.GET)
-	public List<Customer> getallCacheData() {
+	@RequestMapping(value = "/get-all-cache-data" , method = RequestMethod.GET)
+	public List<Customer> getAllCacheData() {
 		Set<Long> keys = new HashSet<>();
-		customerCache.forEach(entry -> keys.add(entry.getKey()));	
-		List<Customer> customers = customerCache.getAll(keys).values().stream().collect(Collectors.toList());
-		return customers;
+		customerCache.forEach(entry -> keys.add(entry.getKey()));
+        return new ArrayList<>(customerCache.getAll(keys).values());
 	}
-	
-	protected static String getRandomString() {
-        String LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-        StringBuilder str = new StringBuilder();
-        Random rnd = new Random();
-        while (str.length() < 18) {
-            int index = (int) (rnd.nextFloat() * LETTERS.length());
-            str.append(LETTERS.charAt(index));
+
+    protected static String getRandomString(int length) {
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            int index = RANDOM.nextInt(LETTERS.length());
+            sb.append(LETTERS.charAt(index));
         }
-        String randStr = str.toString();
-        return randStr;
+        return sb.toString();
     }
 
-	//DEPRECATED: Do not use below call.
+
 	@ResponseBody
 	@RequestMapping(value = "/age" , method = RequestMethod.GET)
+    @Deprecated
 	public Map<Long,Long> getAges(@RequestParam("keys") Set<Long> keys,@RequestParam(name = "uppercase") Boolean uppercase)
 	{
 		Map<Long,Long> ages = new HashMap<>(keys.size());
@@ -130,7 +124,7 @@ public class CustomersController {
 	
 	//TODO: Need to check if keys are present in cache or not
 	@ResponseBody
-	@RequestMapping(value = "/correctage" , method = RequestMethod.GET)
+	@RequestMapping(value = "/correct-age" , method = RequestMethod.GET)
 	public Map<Long,Long> getAgesCorrect(@RequestParam("keys") Set<Long> keys,@RequestParam(name = "uppercase") Boolean uppercase)
 	{
 		Map<Long,EntryProcessorResult<Long>> result = customerCache.invokeAll(keys,new CustomerEntryProcessor(),uppercase);

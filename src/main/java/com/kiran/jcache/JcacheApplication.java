@@ -34,34 +34,44 @@ public class JcacheApplication {
 		SpringApplication.run(JcacheApplication.class, args);
 	}
 
+    /**
+     *  Create Caching Provider
+     *
+     * @return CachingProvider
+     */
+
 	@Bean(destroyMethod="close")
 	public CachingProvider createCachingProvider() {
-		CachingProvider provider = Caching.getCachingProvider();
-		return provider;
+        return Caching.getCachingProvider();
 	}
-	
+
+
+    /**
+     *  Create Cache Manager
+     *
+     * @param cachingProvider takes CachingProvider as input
+     * @return CacheManager
+     */
 	
 	@Bean(destroyMethod="close")
 	public CacheManager createCacheManager(CachingProvider cachingProvider) {
-		CacheManager manager = cachingProvider.getCacheManager();
-		return manager;
+        return cachingProvider.getCacheManager();
 	}
 	
 	
 	@Bean(name = "customersCacheConfig")
 	public MutableConfiguration<Long,Customer> createCustomersCacheConfig(MutableCacheEntryListenerConfiguration<Long,Customer> listenerConfiguration){
-		MutableConfiguration<Long,Customer> config = new MutableConfiguration<Long,Customer>()
-				//.setTypes(Long.class, Customer.class)
-				.setCacheWriterFactory(new CustomerCacheWriterFactory())
-				.setWriteThrough(true)
-				.setCacheLoaderFactory(new CustomerCacheLoaderFactory())
-				.setReadThrough(true)
-		        .setExpiryPolicyFactory(TouchedExpiryPolicy.factoryOf(new Duration(TimeUnit.SECONDS,60)))
-		        .addCacheEntryListenerConfiguration(listenerConfiguration)
-		        .setStatisticsEnabled(true)
-		        .setManagementEnabled(true);
-		        
-		return config;
+
+        return new MutableConfiguration<Long,Customer>()
+                //.setTypes(Long.class, Customer.class)
+                .setCacheWriterFactory(new CustomerCacheWriterFactory())
+                .setWriteThrough(true)
+                .setCacheLoaderFactory(new CustomerCacheLoaderFactory())
+                .setReadThrough(true)
+                .setExpiryPolicyFactory(TouchedExpiryPolicy.factoryOf(new Duration(TimeUnit.SECONDS,60)))
+                .addCacheEntryListenerConfiguration(listenerConfiguration)
+                .setStatisticsEnabled(true)
+                .setManagementEnabled(true);
 	}
 	
 	@Bean(name = "customersCache",destroyMethod="close")
@@ -97,7 +107,7 @@ public class JcacheApplication {
 				FactoryBuilder.factoryOf(CustomerCacheEntryListener.class),
 				FactoryBuilder.factoryOf(CustomerCacheEntryEventFilter.class),
 				true,
-				true  // make this false for async process or timeconsuming tasks
+				true  // make this false for async process or time-consuming tasks
 				);
 	}
 	
