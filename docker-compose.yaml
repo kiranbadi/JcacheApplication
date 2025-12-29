@@ -1,0 +1,16 @@
+version: "3.9"
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-local
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: kiran
+      MYSQL_DATABASE: localdb
+      MYSQL_USER: kiran
+      MYSQL_PASSWORD: kiran
+    ports:
+      - "3306:3306"
+    volumes:
+      - /Users/kiranbadi/projects/docker/mysql:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password

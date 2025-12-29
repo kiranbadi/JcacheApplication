@@ -15,9 +15,9 @@ import com.kiran.jcache.model.Customer;
 public class AuditManager {
 	
 	
-	private MutableCacheEntryListenerConfiguration<Long,Customer> config;
+	private final MutableCacheEntryListenerConfiguration<Long,Customer> config;
 	
-	private Cache<Long,Customer> cache;
+	private final Cache<Long,Customer> cache;
 
 	public AuditManager(MutableCacheEntryListenerConfiguration<Long,Customer> config, Cache<Long,Customer> cache) {
 		super();

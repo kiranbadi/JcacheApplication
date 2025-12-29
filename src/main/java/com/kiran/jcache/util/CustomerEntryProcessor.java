@@ -16,12 +16,10 @@ public class CustomerEntryProcessor implements EntryProcessor<Long,Customer,Long
 	public Long process(MutableEntry<Long, Customer> entry, Object... arguments) throws EntryProcessorException {
 		Customer customer = entry.getValue();
 		boolean uppercase =(boolean)arguments[0];
-		
 		if(uppercase) {
 			customer.setLastName(customer.getLastName().toUpperCase());
 		} else {
 			customer.setLastName(customer.getLastName().toLowerCase());
-
 		}
 		entry.setValue(customer);
 		return calculateAge(customer);
@@ -33,7 +31,7 @@ public class CustomerEntryProcessor implements EntryProcessor<Long,Customer,Long
 	    }
 	    
 	    LocalDate dobAtLocalTimezone = customer.getDob().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-		return Long.valueOf(Period.between(dobAtLocalTimezone, LocalDate.now()).getYears());
+		return (long) Period.between(dobAtLocalTimezone, LocalDate.now()).getYears();
 	}
 
 }

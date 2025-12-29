@@ -24,13 +24,10 @@ import com.kiran.jcache.repository.CustomerRepository;
 public class CustomersCacheWriter implements CacheWriter<Long,Customer>{
 	
 	private static final Log LOG = LogFactory.getLog(CustomersCacheWriter.class);
-	
 
-	
-   
-	CustomerRepository customerRepository;
-	
-	 @Autowired
+	 private final CustomerRepository customerRepository;
+
+     @Autowired
 	public CustomersCacheWriter(CustomerRepository customerRepository) {
 		this.customerRepository = customerRepository;
 	}
@@ -56,16 +53,15 @@ public class CustomersCacheWriter implements CacheWriter<Long,Customer>{
 
 	@Override
 	public void delete(Object key) throws CacheWriterException {
-		LOG.info("Delete called with keys" + (Long)key);
+		LOG.info("Delete called with keys" + key);
 		customerRepository.deleteById((Long) key);
 		
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void deleteAll(Collection<?> keys) throws CacheWriterException {
 		LOG.info("DeleteAll called with keys" + keys);
-		customerRepository.deleteAll((Collection<Long>)keys);
+		customerRepository.deleteAll(keys);
 		
 	}
 }
