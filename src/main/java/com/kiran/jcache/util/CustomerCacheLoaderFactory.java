@@ -1,14 +1,14 @@
 package com.kiran.jcache.util;
 
+import org.springframework.context.annotation.Bean;
+
 import javax.cache.configuration.Factory;
 import java.io.Serial;
 
+
 public class CustomerCacheLoaderFactory implements Factory<CustomerCacheLoader>{
 
-	/**
-	 * 
-	 */
-	@Serial
+    @Serial
     private static final long serialVersionUID = -7660295717518198075L;
 
 	@Override

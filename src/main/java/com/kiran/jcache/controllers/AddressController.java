@@ -35,7 +35,7 @@ public class AddressController {
 	@ResponseBody
 	@RequestMapping(value = "/{addressId}" , method = RequestMethod.GET)
 	@CacheResult
-	public Address getAddress(@PathVariable("addressId") Long addressId) {
+	public Address getAddress(@PathVariable Long addressId) {
 		LOG.info("get for id" + addressId);
 		return addressesRepository.findOne(addressId);
 	}
@@ -43,7 +43,7 @@ public class AddressController {
 	@ResponseBody
 	@RequestMapping(value = "/{addressId}" , method = RequestMethod.DELETE)
 	@CacheRemove
-	public void deleteAddress(@PathVariable("addressId") Long addressId) {
+	public void deleteAddress(@PathVariable Long addressId) {
 		LOG.info("delete for id" + addressId);
 		var address = addressesRepository.findOne(addressId);
 		addressesRepository.delete(address);
@@ -57,10 +57,10 @@ public class AddressController {
 	
 	
 	@ResponseBody
-	@RequestMapping(value = "/post-address" , method = RequestMethod.POST)
+	@RequestMapping(value = "/post-address/{id}" , method = RequestMethod.POST)
 	@CachePut
-	public boolean postAddress(@PathVariable("id") @CacheKey Long id, @CacheValue Address address) {
-		LOG.info("Post for Address" + address);
+	public boolean postAddress(@PathVariable @CacheKey Long id, @CacheValue Address address) {
+		LOG.info("Post for Address {} {}" + address + "with id " + id);
 		addressesRepository.save(address);
 	    return true;
 		

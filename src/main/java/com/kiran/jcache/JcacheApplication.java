@@ -73,12 +73,24 @@ public class JcacheApplication {
                 .setStatisticsEnabled(true)
                 .setManagementEnabled(true);
 	}
-	
-	@Bean(name = "customersCache",destroyMethod="close")
-	public Cache<Long,Customer> createCustomersCache(CacheManager cacheManager, @Qualifier("customersCacheConfig")
-	                                                              MutableConfiguration<Long,Customer> config){		
-		return cacheManager.createCache("customers",config);
-	}
+
+    @Bean(name = "customersCache", destroyMethod = "close")
+    public Cache<Long, Customer> createCustomersCache(CachingProvider cachingProvider, // Inject Provider instead
+                                                      @Qualifier("customersCacheConfig") MutableConfiguration<Long, Customer> config) {
+
+        // Get the current application classloader
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+
+        // Get or Create the CacheManager explicitly using this ClassLoader
+        CacheManager cacheManager = cachingProvider.getCacheManager(
+                cachingProvider.getDefaultURI(),
+                classLoader);
+
+        config.setReadThrough(true)
+                .setCacheLoaderFactory(new FactoryBuilder.ClassFactory<>("com.kiran.jcache.util.CustomerCacheLoaderFactory"));
+
+        return cacheManager.createCache("customers", config);
+    }
 	
 	@Bean
 	public JCacheCacheManager cacheCacheManager(CacheManager cacheManager) {

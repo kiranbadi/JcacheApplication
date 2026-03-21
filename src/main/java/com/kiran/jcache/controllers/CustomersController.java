@@ -10,6 +10,7 @@ import javax.cache.processor.EntryProcessorResult;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,14 +37,16 @@ public class CustomersController {
                     .collect(Collectors.joining()) +
                     "0123456789";
     protected static final SecureRandom RANDOM = new SecureRandom();
-	
+
+
+    @Autowired
 	public CustomersController(Cache<Long, Customer> customerCache) {
 		this.customerCache = customerCache;
 	}
 	
 	@ResponseBody
 	@RequestMapping(value = "/{id}" , method = RequestMethod.GET)
-	public Customer getCustomer(@PathVariable("id") Long id) {
+	public Customer getCustomer(@PathVariable Long id) {
 		LOG.info("get for id" + id);
 		return customerCache.get(id);
 	}
@@ -77,7 +80,7 @@ public class CustomersController {
 	
 	@ResponseBody
 	@RequestMapping(value = "/remove-cache-element/{key}" , method = RequestMethod.DELETE)
-	public boolean removeCacheElement(@PathVariable("key") Long key) {
+	public boolean removeCacheElement(@PathVariable Long key) {
 		return customerCache.remove(key);
 	}
 
@@ -122,7 +125,6 @@ public class CustomersController {
 	}
 	
 	
-	//TODO: Need to check if keys are present in cache or not
 	@ResponseBody
 	@RequestMapping(value = "/correct-age" , method = RequestMethod.GET)
 	public Map<Long,Long> getAgesCorrect(@RequestParam("keys") Set<Long> keys,@RequestParam(name = "uppercase") Boolean uppercase)

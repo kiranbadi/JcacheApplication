@@ -25,9 +25,8 @@ import com.kiran.jcache.repository.CustomerRepository;
 public class CustomerCacheLoader implements CacheLoader<Long,Customer>{
 	
 	private static final Log LOG = LogFactory.getLog(CustomerCacheLoader.class);
-	
-   
-	 CustomerRepository customerRepository;
+
+    private final CustomerRepository customerRepository;
 	
    @Autowired
 	public CustomerCacheLoader(CustomerRepository customerRepository) {
